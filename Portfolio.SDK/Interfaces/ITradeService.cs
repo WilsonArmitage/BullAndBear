@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CommonLib.Interfaces
+namespace PortfolioAPI.SDK.Interfaces
 {
     public interface ITradeService
     {
-        Task<TradeDTO> Get(Guid id);
-        Task<IEnumerable<TradeDTO>> GetAll(TradeFilterDTO tradeFilter);
+        //Task<IEnumerable<TradeDTO>> GetAll(TradeFilterDTO tradeFilter);
+        Task<IEnumerable<TradeDTO>> GetAll(Guid portfolioId);
         Task<Guid> Save(TradeDTO trade);
-        Task<int> Delete(Guid id);
+        Task<int> Delete(Guid tradeId);
     }
 }

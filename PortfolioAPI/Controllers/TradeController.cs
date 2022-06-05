@@ -1,33 +1,45 @@
+using Common.Shared.DTO;
 using Microsoft.AspNetCore.Mvc;
+using PortfolioAPI.Managers.Interfaces;
+using PortfolioAPI.SDK.Interfaces;
 
 namespace PortfolioAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TradeController : ControllerBase
+    public class TradeController : ControllerBase, ITradeService
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<TradeController> _logger;
+        private ITradeManager _tradeManager;
 
-        public TradeController(ILogger<TradeController> logger)
+        public TradeController(
+            ILogger<TradeController> logger,
+            ITradeManager tradeManager
+        )
         {
             _logger = logger;
+            _tradeManager = tradeManager;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet()]
+        [Route("{portfolioId}/All")]
+        public async Task<IEnumerable<TradeDTO>> GetAll(Guid portfolioId)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            return await _tradeManager.GetAll(new TradeFilterDTO() { PortfolioId = portfolioId });
+        }
+
+        [HttpPost()]
+        [Route("Save")]
+        public async Task<Guid> Save([FromBody] TradeDTO trade)
+        {
+            return await _tradeManager.Save(trade);
+        }
+
+        [HttpPost()]
+        [Route("{tradeId}/Delete")]
+        public Task<int> Delete(Guid tradeId)
+        {
+            throw new NotImplementedException();
         }
     }
 }

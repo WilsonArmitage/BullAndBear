@@ -1,33 +1,56 @@
+using Common.Shared.DTO;
 using Microsoft.AspNetCore.Mvc;
+using PortfolioAPI.Managers.Interfaces;
+using PortfolioAPI.SDK.Interfaces;
 
 namespace PortfolioAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class PortfolioController : ControllerBase
+    public class PortfolioController : ControllerBase, IPortfolioService
     {
-        private static readonly string[] Summaries = new[]
-        {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
         private readonly ILogger<PortfolioController> _logger;
+        private IPortfolioManager _portfolioManager;
 
-        public PortfolioController(ILogger<PortfolioController> logger)
+        public PortfolioController(
+            ILogger<PortfolioController> logger,
+            IPortfolioManager portfolioManager
+        )
         {
             _logger = logger;
+            _portfolioManager = portfolioManager;
         }
 
-        [HttpGet(Name = "Get")]
-        public IEnumerable<WeatherForecast> Get()
+        [HttpGet()]
+        [Route("{portfolioId}")]
+        public async Task<PortfolioDTO> Get(Guid portfolioId)
         {
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                Date = DateTime.Now.AddDays(index),
-                TemperatureC = Random.Shared.Next(-20, 55),
-                Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-            })
-            .ToArray();
+            List<PortfolioDTO> result = await _portfolioManager.GetAll(new TradeFilterDTO() { PortfolioId = portfolioId });
+
+            return result
+                .DefaultIfEmpty(new PortfolioDTO())
+                .FirstOrDefault();
+        }
+
+        [HttpGet()]
+        [Route("All")]
+        public async Task<IEnumerable<PortfolioDTO>> GetAll()
+        {
+            return await _portfolioManager.GetAll(new TradeFilterDTO());
+        }
+
+        [HttpPost()]
+        [Route("Save")]
+        public async Task<Guid> Save(PortfolioDTO portfolio)
+        {
+            return await _portfolioManager.Save(portfolio);
+        }
+
+        [HttpPost()]
+        [Route("{id}/Delete")]
+        public async Task<int> Delete(Guid id)
+        {
+            throw new NotImplementedException();
         }
     }
 }

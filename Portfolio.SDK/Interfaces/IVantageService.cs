@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CommonLib.Interfaces
+namespace PortfolioAPI.SDK.Interfaces
 {
     public interface IVantageService
     {
