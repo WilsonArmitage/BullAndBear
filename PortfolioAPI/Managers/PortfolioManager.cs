@@ -8,15 +8,29 @@ namespace PortfolioAPI.Managers
     public class PortfolioManager : IPortfolioManager
     {
         private IPortfolioRepository _portfolioRepository;
+        private ITradeRepository _tradeRepository;
 
-        public PortfolioManager(IPortfolioRepository portfolioRepository)
+        public PortfolioManager(
+            IPortfolioRepository portfolioRepository,
+            ITradeRepository tradeRepository    
+        )
         {
             _portfolioRepository = portfolioRepository;
+            _tradeRepository = tradeRepository;
         }
 
         public async Task<List<PortfolioDTO>> GetAll(TradeFilterDTO tradeFilter)
         {
-            List<Portfolio> response = await _portfolioRepository.GetAll();
+            List<Portfolio> response = new List<Portfolio>();
+
+            if (tradeFilter.PortfolioId != Guid.Empty)
+            {
+                response.AddRange(await _portfolioRepository.Get(tradeFilter.PortfolioId));
+            }
+            else
+            {
+                response.AddRange(await _portfolioRepository.GetAll());
+            }
 
             return response.Select(p =>
                 new PortfolioDTO()
@@ -42,6 +56,24 @@ namespace PortfolioAPI.Managers
             portfolioEntity.Name = portfolio.Name;
 
             return await _portfolioRepository.Save(portfolioEntity);
+        }
+
+        public async Task<bool> Delete(Guid portfolioId)
+        {
+            bool returrnValue = false;
+
+            Portfolio portfolioEntity = new Portfolio();
+
+            if (portfolioId != Guid.Empty)
+            {
+                if (await _portfolioRepository.Delete(portfolioId) > 0)
+                {
+                    returrnValue = true;
+                    await _tradeRepository.Delete(portfolioId);
+                }
+            }
+
+            return returrnValue;
         }
     }
 }

@@ -1,0 +1,112 @@
+﻿@page "{id:Guid}"
+@using Common.Shared.DTO
+@model ManagePortfolioModel
+
+@{
+    ViewData["Title"] = Model.Portfolio.PortfolioId != Guid.Empty ? "Manage Portfolio" : "Create Portfolio";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+</div>
+
+<div class="row">
+    <form method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <input type="hidden" asp-for="Portfolio!.PortfolioId" />
+        <div class="row">
+            <div class="col-6 pt-1">
+                <label asp-for="Portfolio!.Name" class="control-label"></label>
+                <input asp-for="Portfolio!.Name" class="form-control" />
+                <span asp-validation-for="Portfolio!.Name" class="text-danger"></span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3 pt-1">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+            <div class="col-3 pt-1">
+                <a class="btn btn-secondary" asp-page="./Portfolio">Cancel</a>
+            </div>
+        </div>
+    </form>
+</div>
+
+@if (Model != null && Model.Portfolio.PortfolioId != Guid.Empty)
+{
+    <div class="text-center">
+        <h1 class="display-4">Add Trade</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4">
+            <form method="post" asp-page-handler="trade">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Trade!.PortfolioId" />
+                <div class="form-group">
+                    <label asp-for="Trade!.Ticker" class="control-label"></label>
+                    <input asp-for="Trade!.Ticker" class="form-control" />
+                    <span asp-validation-for="Trade!.Ticker" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Trade!.TradeType" class="control-label"></label>
+                    <input asp-for="Trade!.TradeType" class="form-control" />
+                    <span asp-validation-for="Trade!.TradeType" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Trade!.Quantity" class="control-label"></label>
+                    <input asp-for="Trade!.Quantity" class="form-control" />
+                    <span asp-validation-for="Trade!.Quantity" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Trade!.Price" class="control-label"></label>
+                    <input asp-for="Trade!.Price" class="form-control" />
+                    <span asp-validation-for="Trade!.Price" class="text-danger"></span>
+                </div>
+                <div class="col-6 pt-1">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Ticker</th>
+                <th scope="col">Trade Date</th>
+                <th scope="col">Buy/Sell</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col">Cost</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <form method="post">
+                @if (Model != null && Model.Trades != null)
+                    foreach (TradeDTO portfolio in Model.Trades)
+                    {
+                    <tr>
+                        <td>@portfolio.Ticker</td>
+                        <td>@portfolio.TradeDate</td>
+                        <td>@portfolio.TradeType.ToString()</td>
+                        <td>@portfolio.Quantity</td>
+                        <td>@portfolio.Price</td>
+                        <td>@(portfolio.Quantity*portfolio.Price)</td>
+                        <td>
+                                @*<button type="submit" class="btn btn-danger" asp-page-handler="delete" asp-route-id="@portfolio.PortfolioId">Delete</button>*@
+                        </td>
+                    </tr>
+                    }
+            </form>
+        </tbody>
+    </table>
+}
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    }

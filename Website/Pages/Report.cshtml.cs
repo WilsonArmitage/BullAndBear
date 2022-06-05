@@ -5,21 +5,24 @@ using PortfolioAPI.SDK.Services;
 
 namespace Website.Pages
 {
-    public class PortfolioModel : PageModel
+    public class ReportModel : PageModel
     {
-        private readonly ILogger<PortfolioModel> _logger;
+        private readonly ILogger<ReportModel> _logger;
         private PortfolioAPIService _portfolioAPIService;
+        private TradeAPIService _tradeAPIService;
 
         [BindProperty]
         public List<PortfolioDTO> Portfolios { get; set; }
 
-        public PortfolioModel(
-            ILogger<PortfolioModel> logger,
-            PortfolioAPIService portfolioAPIService
+        public ReportModel(
+            ILogger<ReportModel> logger,
+            PortfolioAPIService portfolioAPIService,
+            TradeAPIService tradeAPIService
             )
         {
             _logger = logger;
             _portfolioAPIService = portfolioAPIService;
+            _tradeAPIService = tradeAPIService;
         }
 
         public async Task OnGetAsync()

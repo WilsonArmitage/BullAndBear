@@ -8,5 +8,6 @@ namespace PortfolioAPI.Repository.Interfaces
         public Task<List<Trade>> Get(Guid tradeId);
 
         public Task<Guid> Save(Trade trade);
+        public Task<int> Delete(Guid portfolioId);
     }
 }

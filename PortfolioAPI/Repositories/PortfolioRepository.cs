@@ -41,5 +41,26 @@ namespace PortfolioAPI.Repository
 
             return portfolio.Id;
         }
+
+        public async Task<int> Delete(Guid portfolioId)
+        {
+            int returnValue = 0;
+
+            if (portfolioId != Guid.Empty)
+            {
+                List<Portfolio> result = await _dbContext.Portfolios
+                  .Where(p => p.Id == portfolioId)
+                  .Take(1)
+                  .ToListAsync();
+
+                if (result.Any())
+                {
+                    _dbContext.Portfolios.RemoveRange(result);
+                    returnValue = await _dbContext.SaveChangesAsync();
+                }
+            }
+
+            return returnValue;
+        }
     }
 }

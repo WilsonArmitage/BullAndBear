@@ -28,8 +28,14 @@ namespace Website
                 });
 
             builder.Services.AddHttpClient<PortfolioAPIService>();
+            builder.Services.AddHttpClient<TradeAPIService>();
 
             builder.Services.AddRazorPages();
+            builder.Services.AddControllers()
+                .AddJsonOptions(j =>
+                {
+                    j.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
 
             var app = builder.Build();
 

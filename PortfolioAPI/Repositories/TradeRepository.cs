@@ -13,7 +13,7 @@ namespace PortfolioAPI.Repository
             _dbContext = dbContext;
         }
 
-        async Task<List<Trade>> ITradeRepository.Get(Guid tradeId)
+        public async Task<List<Trade>> Get(Guid tradeId)
         {
             return await _dbContext.Trades
                   .Where(p => p.Id == tradeId)
@@ -21,14 +21,14 @@ namespace PortfolioAPI.Repository
                   .ToListAsync();
         }
 
-        async Task<List<Trade>> ITradeRepository.GetAll(Guid portfolioId)
+        public async Task<List<Trade>> GetAll(Guid portfolioId)
         {
             return await _dbContext.Trades
                 .Where(t => t.PortfolioId == portfolioId)
                 .ToListAsync();
         }
 
-        async Task<Guid> ITradeRepository.Save(Trade trade)
+        public async Task<Guid> Save(Trade trade)
         {
             if (trade.Id == Guid.Empty)
             {
@@ -41,6 +41,26 @@ namespace PortfolioAPI.Repository
             await _dbContext.SaveChangesAsync();
 
             return trade.Id;
+        }
+
+        public async Task<int> Delete(Guid portfolioId)
+        {
+            int returnValue = 0;
+
+            if (portfolioId != Guid.Empty)
+            {
+                List<Trade> result = await _dbContext.Trades
+                  .Where(t => t.PortfolioId == portfolioId)
+                  .ToListAsync();
+
+                if (result.Any())
+                {
+                    _dbContext.Trades.RemoveRange(result);
+                    returnValue = await _dbContext.SaveChangesAsync();
+                }
+            }
+            
+            return returnValue;
         }
     }
 }

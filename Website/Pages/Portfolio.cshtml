@@ -6,11 +6,41 @@
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<p>Use this page to find details on your portfolio.</p>
 
-@{
-    foreach(PortfolioDTO portfolio in Model.Portfolios)
-    {
-    <p>@portfolio.Name</p>
-    }
-}
+<div class="text-center">
+    <h1 class="display-4">Portfolio Overview</h1>
+    <p><a class="btn btn-primary" asp-page="./ManagePortfolio" asp-route-id="@Guid.Empty">Add</a></p>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        <form method="post">
+            @if (Model != null)
+                foreach (PortfolioDTO portfolio in Model.Portfolios)
+                {
+                <tr>
+                    <td>@portfolio.Name</td>
+                    <td>
+                        <a class="btn btn-primary" asp-page="./ManagePortfolio" asp-route-id="@portfolio.PortfolioId">Edit</a>
+                        <a class="btn btn-primary" asp-page="./Report" asp-route-id="@portfolio.PortfolioId">View Report</a>
+                    </td>
+                    <td>
+
+                    </td>
+                    <td>
+                        <button type="submit" class="btn btn-danger" asp-page-handler="delete" asp-route-id="@portfolio.PortfolioId">Delete</button>
+                    </td>
+                </tr>
+                }
+        </form>
+    </tbody>
+</table>

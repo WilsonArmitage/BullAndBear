@@ -7,5 +7,6 @@ namespace PortfolioAPI.Managers.Interfaces
         Task<List<PortfolioDTO>> GetAll(TradeFilterDTO tradeFilter);
 
         Task<Guid> Save(PortfolioDTO portfolio);
+        Task<bool> Delete(Guid portfolioId);
     }
 }

@@ -9,6 +9,6 @@ namespace PortfolioAPI.SDK.Interfaces
         Task<PortfolioDTO> Get(Guid portfolioId);
         Task<IEnumerable<PortfolioDTO>> GetAll();
         Task<Guid> Save(PortfolioDTO portfolio);
-        Task<int> Delete(Guid portfolioId);
+        Task<bool> Delete(Guid portfolioId);
     }
 }

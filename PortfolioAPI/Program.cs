@@ -43,7 +43,11 @@ namespace PortfolioAPI
             builder.Services.TryAddTransient<IPortfolioManager, PortfolioManager>();
             builder.Services.TryAddTransient<ITradeManager, TradeManager>(); 
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllers()
+                .AddJsonOptions(j =>
+                {
+                    j.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+                });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();

@@ -9,5 +9,7 @@ namespace PortfolioAPI.Repository.Interfaces
 
         Task<Guid> Save(Portfolio portfolio);
 
+        Task<int> Delete(Guid portfolioId);
+
     }
 }

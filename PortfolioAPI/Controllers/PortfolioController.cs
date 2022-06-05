@@ -48,9 +48,9 @@ namespace PortfolioAPI.Controllers
 
         [HttpPost()]
         [Route("{id}/Delete")]
-        public async Task<int> Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            return await _portfolioManager.Delete(id);
         }
     }
 }

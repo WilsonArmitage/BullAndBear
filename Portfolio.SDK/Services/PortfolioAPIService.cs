@@ -19,23 +19,40 @@ namespace PortfolioAPI.SDK.Services
 
         public PortfolioAPIService(HttpClient client, IOptionsMonitor<PortfolioAPIOptions> options)
         {
-            try
-            {
-                client.BaseAddress = new Uri(options.Get("PortfolioAPI").BaseAddress);
 
-                client.DefaultRequestHeaders.Add("Accept", "text/plain");
-            }
-            catch (OptionsValidationException)
-            {
+            client.BaseAddress = new Uri(options.Get("PortfolioAPI").BaseAddress);
 
-            }
+            client.DefaultRequestHeaders.Add("Accept", "text/plain");
 
             _client = client;
         }
 
-        public Task<PortfolioDTO> Get(Guid id)
+        public async Task<PortfolioDTO> Get(Guid id)
         {
-            throw new NotImplementedException();
+            PortfolioDTO returnValue = new PortfolioDTO();
+
+            HttpResponseMessage response = await _client.GetAsync(
+                $"/Portfolio/{id}");
+
+            response.EnsureSuccessStatusCode();
+
+            using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+            {
+                if (responseStream.Length > 0)
+                {
+                    JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+                    PortfolioDTO result = await JsonSerializer.DeserializeAsync
+                      <PortfolioDTO>(responseStream, options);
+
+                    if (result != null)
+                    {
+                        returnValue = result;
+                    }
+                }
+            }
+
+            return returnValue;
         }
 
         public async Task<IEnumerable<PortfolioDTO>> GetAll()
@@ -91,9 +108,27 @@ namespace PortfolioAPI.SDK.Services
             return returnValue;
         }
 
-        public Task<int> Delete(Guid id)
+        public async Task<bool> Delete(Guid id)
         {
-            throw new NotImplementedException();
+            bool returnValue = false;
+
+            HttpResponseMessage response = await _client.GetAsync(
+               $"/Portfolio/{id}/Delete");
+
+            response.EnsureSuccessStatusCode();
+
+            using (Stream responseStream = await response.Content.ReadAsStreamAsync())
+            {
+                if (responseStream.Length > 0)
+                {
+                    JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+                    returnValue = await JsonSerializer.DeserializeAsync
+                      <bool>(responseStream, options);
+                }
+            }
+
+            return returnValue;
         }
     }
 }
