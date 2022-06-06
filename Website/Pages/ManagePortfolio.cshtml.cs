@@ -75,10 +75,11 @@ namespace Website.Pages
 
             if (Trade != null)
             {
+                Trade.PortfolioId = id;
                 await _tradeAPIService.Save(Trade);
             }
 
-            return Page();
+            return RedirectToPage("ManagePortfolio", new { id = id });
         }
     }
 }

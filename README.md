@@ -35,5 +35,4 @@ Assuming that no trade involves fractional shares. Although this is possible und
 Checking for these conditions would be a good future enhancement.
 
 ### Trade Date Input
-Limited to weekdays, not factoring in a timezone.
 As for the trade the price is entered manually. 

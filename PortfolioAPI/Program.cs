@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using PortfolioAPI.Constraints;
+using PortfolioAPI.External.Services;
 using PortfolioAPI.Managers;
 using PortfolioAPI.Managers.Interfaces;
 using PortfolioAPI.Middleware;
@@ -8,7 +9,6 @@ using PortfolioAPI.Models;
 using PortfolioAPI.Repository;
 using PortfolioAPI.Repository.Interfaces;
 using PortfolioAPI.SDK.Options;
-using PortfolioAPI.SDK.Services;
 
 namespace PortfolioAPI
 {
@@ -34,7 +34,7 @@ namespace PortfolioAPI
                 option.LowercaseUrls = true;
             });
 
-            builder.Services.AddHttpClient<VantageAPIService>();
+            builder.Services.AddHttpClient<AlphaVantageAPIService>();
 
             // Add services to the container.
             builder.Services.TryAddTransient<IPortfolioRepository, PortfolioRepository>();

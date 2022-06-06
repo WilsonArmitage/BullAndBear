@@ -10,28 +10,21 @@ using Microsoft.Extensions.Options;
 using PortfolioAPI.SDK.Options;
 using Common.Shared.DTO;
 using PortfolioAPI.SDK.Enumerations;
+using PortfolioAPI.SDK.DTO;
 
 namespace PortfolioAPI.SDK.Services
 {
     public class VantageAPIService
     {
         public HttpClient _client { get; }
-        private string _serviceApiKey { get; }
-        private static Dictionary<string, string> AlphaVantageSupportedFunctions => new Dictionary<string, string>()
-        {
-            { "daily", "TIME_SERIES_DAILY" },
-            { "quote", "GLOBAL_QUOTE" },
-            { "overview", "OVERVIEW" },
-            { "statement", "INCOME_STATEMENT" },
-        };
 
-        public VantageAPIService(HttpClient client, IOptionsMonitor<VantageAPIOptions> options)
+        public VantageAPIService(HttpClient client, IOptionsMonitor<PortfolioAPIOptions> options)
         {
             try
             {
-                _serviceApiKey = options.Get("VantageAPI").ServiceApiKey;
+                client.BaseAddress = new Uri(options.Get("PortfolioAPI").BaseAddress);
 
-                client.BaseAddress = new Uri("https://www.alphavantage.co/");
+                client.DefaultRequestHeaders.Add("Accept", "text/plain");
             }
             catch (OptionsValidationException)
             {
@@ -41,38 +34,32 @@ namespace PortfolioAPI.SDK.Services
             _client = client;
         }
 
-        private string ToAlphaVantageQuery(string verb, StockFilterDTO filter)
+        public async Task<VantageDailyDTO> GetDaily(string ticker)
         {
-            return $"query?function={verb}&symbol={filter.Symbol}&apikey={_serviceApiKey}";
-        }
+            VantageDailyDTO returnValue = new VantageDailyDTO();
 
-        private async Task<List<KeyValuePair<string, dynamic>>> GetFromAlphaVantage(string query)
-        {
-            HttpResponseMessage response = await _client.GetAsync(query);
+            HttpResponseMessage response = await _client.GetAsync(
+                $"/Vantage/{ticker}/Daily");
 
             response.EnsureSuccessStatusCode();
 
-            List<KeyValuePair<string, dynamic>> result = new List<KeyValuePair<string, dynamic>>();
             using (Stream responseStream = await response.Content.ReadAsStreamAsync())
             {
-                result.AddRange(await JsonSerializer
-                    .DeserializeAsync<Dictionary<string, dynamic>>(responseStream)
-                );
+                if (responseStream.Length > 0)
+                {
+                    JsonSerializerOptions options = new() { PropertyNameCaseInsensitive = true };
+
+                    VantageDailyDTO result = await JsonSerializer.DeserializeAsync
+                      <VantageDailyDTO>(responseStream, options);
+
+                    if (result != null)
+                    {
+                        returnValue = result;
+                    }
+                }
             }
 
-            return result;
-        }
-
-        public async Task<List<KeyValuePair<string, dynamic>>> QueryAlphaVantage(VantageVerbs verbEnum, StockFilterDTO filter)
-        {
-            if (AlphaVantageSupportedFunctions.TryGetValue(verbEnum.ToString(), out string functionVerb))
-            {
-                string query = ToAlphaVantageQuery(functionVerb, filter);
-
-                return await GetFromAlphaVantage(query);
-            }
-
-            return new List<KeyValuePair<string, dynamic>>();
+            return returnValue;
         }
     }
 }

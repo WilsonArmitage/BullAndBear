@@ -2,41 +2,30 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PortfolioAPI.SDK.Services;
+using Website.Managers.Intefaces;
+using Website.Models;
 
 namespace Website.Pages
 {
     public class ReportModel : PageModel
     {
         private readonly ILogger<ReportModel> _logger;
-        private PortfolioAPIService _portfolioAPIService;
-        private TradeAPIService _tradeAPIService;
+        private IPLManager _plManager;
 
-        [BindProperty]
-        public List<PortfolioDTO> Portfolios { get; set; }
+        public PLReportModel Report { get; set; }
 
         public ReportModel(
             ILogger<ReportModel> logger,
-            PortfolioAPIService portfolioAPIService,
-            TradeAPIService tradeAPIService
+            IPLManager plManager
             )
         {
             _logger = logger;
-            _portfolioAPIService = portfolioAPIService;
-            _tradeAPIService = tradeAPIService;
+            _plManager = plManager;
         }
 
-        public async Task OnGetAsync()
+        public async Task OnGetAsync(Guid id)
         {
-            Portfolios = (await _portfolioAPIService.GetAll()).ToList();
-
+            Report = await _plManager.GetPLReport(id);
         }
-
-        public async Task<IActionResult> OnPostDeleteAsync(Guid id)
-        {
-            await _portfolioAPIService.Delete(id);
-
-            return RedirectToPage();
-        }
-
     }
 }

@@ -25,6 +25,7 @@ namespace PortfolioAPI.Managers
                     PortfolioId = t.PortfolioId,
                     Ticker = t.Ticker,
                     TradeDate = t.Date.DateTime,
+                    TradeType = t.Buy ? TradeType.Buy : TradeType.Sell,
                     Price = t.Price,
                     Quantity = t.Quantity
 
@@ -46,7 +47,7 @@ namespace PortfolioAPI.Managers
 
             tradeEntity.PortfolioId = trade.PortfolioId;
             tradeEntity.Ticker = trade.Ticker.Truncate(5);
-            tradeEntity.Date = trade.TradeDate.Date;
+            tradeEntity.Date = DateTime.Now;
             tradeEntity.Buy = trade.TradeType == TradeType.Buy;
             tradeEntity.Quantity = trade.Quantity;
             tradeEntity.Price = trade.Price;

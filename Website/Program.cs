@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using PortfolioAPI.SDK.Options;
 using PortfolioAPI.SDK.Services;
 using Website.Data;
+using Website.Managers;
+using Website.Managers.Intefaces;
 
 namespace Website
 {
@@ -29,6 +32,9 @@ namespace Website
 
             builder.Services.AddHttpClient<PortfolioAPIService>();
             builder.Services.AddHttpClient<TradeAPIService>();
+            builder.Services.AddHttpClient<VantageAPIService>();
+
+            builder.Services.TryAddTransient<IPLManager, PLManager>();
 
             builder.Services.AddRazorPages();
             builder.Services.AddControllers()

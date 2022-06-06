@@ -1,5 +1,6 @@
 ﻿@page "{id:Guid}"
 @using Common.Shared.DTO
+@using Website.Models
 @model ReportModel
 @{
     ViewData["Title"] = "Portfolio Report";
@@ -7,6 +8,90 @@
 <h1>@ViewData["Title"]</h1>
 
 <div class="text-center">
-    <h1 class="display-4">Portfolio Report</h1>
     <p><a class="btn btn-secondary" asp-page="./Portfolio">Close</a></p>
+</div>
+
+<div class="row">
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Ticker</th>
+                <th scope="col">As of Date</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Quantity</th>
+                <th scope="col">Price</th>
+                <th scope="col">Market Value</th>
+                <th scope="col">Previous Close</th>
+                <th scope="col">Daily P&amp;L</th>
+                <th scope="col">Inception P&amp;L</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td></td>
+                <td></td>
+                <td>@Model.Report.TradeReports.Sum(x => x.Cost).ToString()</td>
+                <td></td>
+                <td></td>
+                <td>@Model.Report.TradeReports.Sum(x => x.MarketValue)</td>
+                <td></td>
+                <td>@Model.Report.TradeReports.Sum(x => x.DailyPL)</td>
+                <td>@Model.Report.TradeReports.Sum(x => x.InceptionPL)</td>
+                <td></td>
+            </tr>
+
+            @if (Model != null && Model.Report != null)
+                foreach (PLReportTradeModel portfolio in Model.Report.TradeReports)
+                {
+                    <tr>
+                        <td>@portfolio.Ticker</td>
+                        <td>@portfolio.AsOfDate</td>
+                        <td>@portfolio.Cost.ToString()</td>
+                        <td>@portfolio.Quantity</td>
+                        <td>@portfolio.Price</td>
+                        <td>@portfolio.MarketValue</td>
+                        <td>@portfolio.PreviousClose</td>
+                        <td>@portfolio.DailyPL</td>
+                        <td>@portfolio.InceptionPL</td>
+                        <td></td>
+                    </tr>
+                }
+        </tbody>
+    </table>
+</div>
+
+<div class="row">
+    @if (Model != null && Model.Report.Trades.Any())
+    {
+        <div class="text-center">
+            <h3 class="display-4">All Trades</h3>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Ticker</th>
+                    <th scope="col">Trade Date</th>
+                    <th scope="col">Buy/Sell</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Cost</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Report != null && Model.Report.Trades != null)
+                    foreach (TradeDTO trade in Model.Report.Trades)
+                    {
+                        <tr>
+                            <td>@trade.Ticker</td>
+                            <td>@trade.TradeDate</td>
+                            <td>@trade.TradeType.ToString()</td>
+                            <td>@trade.Quantity</td>
+                            <td>@trade.Price</td>
+                            <td>@(trade.Quantity*trade.Price)</td>
+                        </tr>
+                    }
+            </tbody>
+        </table>
+    }
 </div>
