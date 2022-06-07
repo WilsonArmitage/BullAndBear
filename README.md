@@ -19,10 +19,10 @@ Should any issues occur, a valid key can be inserted into the user secrets via:
 
 ```mermaid
   graph TD;
-      Website-->Portfolio API;
-      Website-->SQL Server Express (Identity);
-      Portfolio API-->Alpha Vantage API;
-      Portfolio API-->SQL Server Express;
+      A[Website]-->B[Portfolio API];
+      A-->C[SQL Server Express 'Identity'];
+      B-->D[Alpha Vantage API];
+      B-->E[SQL Server Express];
 ```
 
 ## Limitations
